@@ -30,7 +30,6 @@
 //	or implied, of Jonathan Wight.
 
 #import "CCoverflowCollectionViewLayout.h"
-
 #import "CInterpolator.h"
 #import "CBetterCollectionViewLayoutAttributes.h"
 #import "tgmath.h"
@@ -40,9 +39,9 @@
 //#define WORH(axis, size) ((axis) ? (size.height) : (size.width))
 
 @interface CCoverflowCollectionViewLayout ()
+
 @property (readwrite, nonatomic, strong) NSIndexPath *currentIndexPath;
 @property (readwrite, nonatomic, strong) NSIndexPath *savedCenterIndexPath;
-
 @property (readwrite, nonatomic, assign) CGFloat centerOffset;
 @property (readwrite, nonatomic, assign) NSInteger cellCount;
 @property (readwrite, nonatomic, strong) CInterpolator *scaleInterpolator;
@@ -50,212 +49,188 @@
 @property (readwrite, nonatomic, strong) CInterpolator *rotationInterpolator;
 @property (readwrite, nonatomic, strong) CInterpolator *zOffsetInterpolator;
 @property (readwrite, nonatomic, strong) CInterpolator *darknessInterpolator;
+
 @end
 
 @implementation CCoverflowCollectionViewLayout
 
-+ (Class)layoutAttributesClass
-    {
-    return([CBetterCollectionViewLayoutAttributes class]);
-    }
++ (Class)layoutAttributesClass {
+    return ([CBetterCollectionViewLayoutAttributes class]);
+}
 
-- (id)init
-    {
-    if ((self = [super init]) != NULL)
-        {
-		[self setup];
-        }
+- (id)init {
+    if ((self = [super init]) != NULL) {
+        [self setup];
+    }
     return self;
-    }
+}
 
-- (void)awakeFromNib
-	{
-	[self setup];
-	}
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    [self setup];
+}
 
-- (void)setup
-	{
-    self.cellSize = (CGSize){ 200.0f, 300.0f };
+- (void)setup {
+    self.cellSize = (CGSize){200.0f, 300.0f};
     self.cellSpacing = 40.0f;
-	self.snapToCells = YES;
+    self.snapToCells = YES;
 
     self.positionoffsetInterpolator = [[CInterpolator interpolatorWithDictionary:@{
-		@(-1.0f):               @(-self.cellSpacing * 2.0f),
-		@(-0.2f - FLT_EPSILON): @(  0.0f),
-		}] interpolatorWithReflection:YES];
+        @(-1.0f) : @(-self.cellSpacing * 2.0f),
+        @(-0.2f - FLT_EPSILON) : @(0.0f),
+    }] interpolatorWithReflection:YES];
 
-	self.rotationInterpolator = [[CInterpolator interpolatorWithDictionary:@{
-		@(-0.5f):  @(50.0f),
-		@(-0.0f): @( 0.0f),
-		}] interpolatorWithReflection:YES];
+    self.rotationInterpolator = [[CInterpolator interpolatorWithDictionary:@{
+        @(-0.5f) : @(50.0f),
+        @(-0.0f) : @(0.0f),
+    }] interpolatorWithReflection:YES];
 
-	self.scaleInterpolator = [[CInterpolator interpolatorWithDictionary:@{
-		@(-1.0f): @(0.9),
-		@(-0.5f): @(1.0f),
-		}] interpolatorWithReflection:NO];
+    self.scaleInterpolator = [[CInterpolator interpolatorWithDictionary:@{
+        @(-1.0f) : @(0.9),
+        @(-0.5f) : @(1.0f),
+    }] interpolatorWithReflection:NO];
 
-//	self.zOffsetInterpolator = [[CInterpolator interpolatorWithDictionary:@{
-//		@(-9.0f):               @(9.0f),
-//		@(-1.0f - FLT_EPSILON): @(1.0f),
-//		@(-1.0f):               @(0.0f),
-//		}] interpolatorWithReflection:NO];
+    //	self.zOffsetInterpolator = [[CInterpolator interpolatorWithDictionary:@{
+    //		@(-9.0f):               @(9.0f),
+    //		@(-1.0f - FLT_EPSILON): @(1.0f),
+    //		@(-1.0f):               @(0.0f),
+    //		}] interpolatorWithReflection:NO];
 
-	self.darknessInterpolator = [[CInterpolator interpolatorWithDictionary:@{
-		@(-2.5f): @(0.5f),
-		@(-0.5f): @(0.0f),
-		}] interpolatorWithReflection:NO];
-	}
+    self.darknessInterpolator = [[CInterpolator interpolatorWithDictionary:@{
+        @(-2.5f) : @(0.5f),
+        @(-0.5f) : @(0.0f),
+    }] interpolatorWithReflection:NO];
+}
 
-- (void)prepareLayout
-    {
+- (void)prepareLayout {
     [super prepareLayout];
-
-	self.centerOffset = (self.collectionView.bounds.size.width - self.cellSpacing) * 0.5f;
-
+    self.centerOffset = (self.collectionView.bounds.size.width - self.cellSpacing) * 0.5f;
     self.cellCount = [self.collectionView numberOfItemsInSection:0];
-	}
+}
 
-- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
-    {
-        if ( newBounds.size.width != self.collectionView.bounds.size.width )
-        {
-            self.savedCenterIndexPath = self.currentIndexPath;
-        }
-
-        return(YES);
+- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
+    if (newBounds.size.width != self.collectionView.bounds.size.width) {
+        self.savedCenterIndexPath = self.currentIndexPath;
     }
+    return (YES);
+}
 
-- (CGSize)collectionViewContentSize
-	{
+- (CGSize)collectionViewContentSize {
     const CGSize theSize = {
         .width = self.cellSpacing * self.cellCount + self.centerOffset * 2.0f,
         .height = self.collectionView.bounds.size.height,
-        };
-    return(theSize);
-	}
+    };
+    return (theSize);
+}
 
-- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
-	{
+- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSMutableArray *theLayoutAttributes = [NSMutableArray array];
 
-	// Cells...
-	// TODO -- 3 is a bit of a fudge to make sure we get all cells... Ideally we should compute the right number of extra cells to fetch...
+    // Cells...
+    // TODO -- 3 is a bit of a fudge to make sure we get all cells... Ideally we should compute the right number of extra cells to fetch...
     NSInteger theStart = MIN(MAX((NSInteger)floor(CGRectGetMinX(rect) / self.cellSpacing) - 3, 0), self.cellCount);
     NSInteger theEnd = MIN(MAX((NSInteger)ceil(CGRectGetMaxX(rect) / self.cellSpacing) + 3, 0), self.cellCount);
 
-    for (NSInteger N = theStart; N != theEnd; ++N)
-        {
+    for (NSInteger N = theStart; N != theEnd; ++N) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:N inSection:0];
 
         UICollectionViewLayoutAttributes *theAttributes = [self layoutAttributesForItemAtIndexPath:indexPath];
-        if (theAttributes != NULL)
-            {
+        if (theAttributes != NULL) {
             [theLayoutAttributes addObject:theAttributes];
-            }
         }
+    }
 
-	// Decorations...
-	[theLayoutAttributes addObject:[self layoutAttributesForSupplementaryViewOfKind:@"title" atIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]]];
+    // Decorations...
+    [theLayoutAttributes addObject:[self layoutAttributesForSupplementaryViewOfKind:@"title" atIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]]];
 
-    return(theLayoutAttributes);
-	}
+    return (theLayoutAttributes);
+}
 
-- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
-	{
-	// Capture some commonly used variables...
+- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
+    // Capture some commonly used variables...
     const CGFloat theRow = indexPath.row;
-	const CGRect theViewBounds = self.collectionView.bounds;
+    const CGRect theViewBounds = self.collectionView.bounds;
 
     CBetterCollectionViewLayoutAttributes *theAttributes = [CBetterCollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
-	theAttributes.size = self.cellSize;
+    theAttributes.size = self.cellSize;
 
-	// #########################################################################
+    // #########################################################################
 
-	// Delta is distance from center of the view in cellSpacing units...
-	const CGFloat theDelta = ((theRow + 0.5f) * self.cellSpacing + self.centerOffset - theViewBounds.size.width * 0.5f - self.collectionView.contentOffset.x) / self.cellSpacing;
+    // Delta is distance from center of the view in cellSpacing units...
+    const CGFloat theDelta = ((theRow + 0.5f) * self.cellSpacing + self.centerOffset - theViewBounds.size.width * 0.5f - self.collectionView.contentOffset.x) / self.cellSpacing;
 
-	// TODO - we should write a getter for this that calculates the value. Setting it constantly is wasteful.
-	if (round(theDelta) == 0)
-		{
-		self.currentIndexPath = indexPath;
-		}
+    // TODO - we should write a getter for this that calculates the value. Setting it constantly is wasteful.
+    if (round(theDelta) == 0) {
+        self.currentIndexPath = indexPath;
+    }
 
-	// #########################################################################
+    // #########################################################################
 
     const CGFloat thePosition = (theRow + 0.5f) * (self.cellSpacing) + [self.positionoffsetInterpolator interpolatedValueForKey:theDelta];
-	theAttributes.center = (CGPoint){ thePosition + self.centerOffset, CGRectGetMidY(theViewBounds) };
+    theAttributes.center = (CGPoint){thePosition + self.centerOffset, CGRectGetMidY(theViewBounds)};
 
-	// #########################################################################
+    // #########################################################################
 
-	CATransform3D theTransform = CATransform3DIdentity;
-	theTransform.m34 = 1.0f / -850.0f; // Magic Number is Magic.
+    CATransform3D theTransform = CATransform3DIdentity;
+    theTransform.m34 = 1.0f / -850.0f; // Magic Number is Magic.
 
     const CGFloat theScale = [self.scaleInterpolator interpolatedValueForKey:theDelta];
     theTransform = CATransform3DScale(theTransform, theScale, theScale, 1.0f);
 
-	const CGFloat theRotation = [self.rotationInterpolator interpolatedValueForKey:theDelta];
-	theTransform = CATransform3DTranslate(theTransform, self.cellSize.width * (theDelta > 0.0f ? 0.5f : -0.5f), 0.0f, 0.0f);
-	theTransform = CATransform3DRotate(theTransform, theRotation * (CGFloat)M_PI / 180.0f, 0.0f, 1.0f, 0.0f);
-	theTransform = CATransform3DTranslate(theTransform, self.cellSize.width * (theDelta > 0.0f ? -0.5f : 0.5f), 0.0f, 0.0f);
+    const CGFloat theRotation = [self.rotationInterpolator interpolatedValueForKey:theDelta];
+    theTransform = CATransform3DTranslate(theTransform, self.cellSize.width * (theDelta > 0.0f ? 0.5f : -0.5f), 0.0f, 0.0f);
+    theTransform = CATransform3DRotate(theTransform, theRotation * (CGFloat)M_PI / 180.0f, 0.0f, 1.0f, 0.0f);
+    theTransform = CATransform3DTranslate(theTransform, self.cellSize.width * (theDelta > 0.0f ? -0.5f : 0.5f), 0.0f, 0.0f);
 
-	const CGFloat theZOffset = [self.zOffsetInterpolator interpolatedValueForKey:theDelta];
-	theTransform = CATransform3DTranslate(theTransform, 0.0, 0.0, theZOffset);
+    const CGFloat theZOffset = [self.zOffsetInterpolator interpolatedValueForKey:theDelta];
+    theTransform = CATransform3DTranslate(theTransform, 0.0, 0.0, theZOffset);
 
-	theAttributes.transform3D = theTransform;
+    theAttributes.transform3D = theTransform;
 
-	// #########################################################################
+    // #########################################################################
 
-	theAttributes.shieldAlpha = [self.darknessInterpolator interpolatedValueForKey:theDelta];
+    theAttributes.shieldAlpha = [self.darknessInterpolator interpolatedValueForKey:theDelta];
 
-    theAttributes.zIndex = self.cellCount - labs(self.currentIndexPath.row-indexPath.row);
+    theAttributes.zIndex = self.cellCount - labs(self.currentIndexPath.row - indexPath.row);
 
-	// #########################################################################
+    // #########################################################################
 
-    return(theAttributes);
-	}
+    return (theAttributes);
+}
 
-- (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
-	{
-	UICollectionViewLayoutAttributes *theAttributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:kind withIndexPath:indexPath];
-	theAttributes.center = (CGPoint){ .x = CGRectGetMidX(self.collectionView.bounds), .y = CGRectGetMaxY(self.collectionView.bounds) - 25};
-	theAttributes.size = (CGSize){ 200, 50 };
-	theAttributes.zIndex = 1;
-	return(theAttributes);
-	}
+- (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewLayoutAttributes *theAttributes = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:kind withIndexPath:indexPath];
+    theAttributes.center = (CGPoint){.x = CGRectGetMidX(self.collectionView.bounds), .y = CGRectGetMaxY(self.collectionView.bounds) - 25};
+    theAttributes.size = (CGSize){200, 50};
+    theAttributes.zIndex = 1;
+    return (theAttributes);
+}
 
-- (CGPoint)targetContentOffsetForProposedContentOffset:(CGPoint)proposedContentOffset withScrollingVelocity:(CGPoint)velocity
-    {
+- (CGPoint)targetContentOffsetForProposedContentOffset:(CGPoint)proposedContentOffset withScrollingVelocity:(CGPoint)velocity {
     CGPoint theTargetContentOffset = proposedContentOffset;
-    if (self.snapToCells == YES)
-        {
+    if (self.snapToCells == YES) {
         theTargetContentOffset.x = round(theTargetContentOffset.x / self.cellSpacing) * self.cellSpacing;
         theTargetContentOffset.x = MIN(theTargetContentOffset.x, (self.cellCount - 1) * self.cellSpacing);
-        }
-    return(theTargetContentOffset);
     }
+    return (theTargetContentOffset);
+}
 
-- (CGPoint)targetContentOffsetForProposedContentOffset:(CGPoint)proposedContentOffset
-{
+- (CGPoint)targetContentOffsetForProposedContentOffset:(CGPoint)proposedContentOffset {
     CGPoint theTargetContentOffset = proposedContentOffset;
-    
-    if (self.snapToCells == YES)
-    {
-        if ( self.savedCenterIndexPath )
-        {
+
+    if (self.snapToCells == YES) {
+        if (self.savedCenterIndexPath) {
             CGFloat theRow = self.savedCenterIndexPath.row;
             theTargetContentOffset.x =
-            MAX( 0, ( theRow + 0.5f ) * self.cellSpacing + self.centerOffset - CGRectGetWidth(self.collectionView.bounds ) / 2.0f );
+                MAX(0, (theRow + 0.5f) * self.cellSpacing + self.centerOffset - CGRectGetWidth(self.collectionView.bounds) / 2.0f);
             self.currentIndexPath = self.savedCenterIndexPath;
             self.savedCenterIndexPath = Nil;
-        }
-        else
-        {
+        } else {
             theTargetContentOffset.x = round(theTargetContentOffset.x / self.cellSpacing) * self.cellSpacing;
             theTargetContentOffset.x = MIN(theTargetContentOffset.x, (self.cellCount - 1) * self.cellSpacing);
         }
     }
-    return(theTargetContentOffset);
+    return (theTargetContentOffset);
 }
-
 
 @end

@@ -31,7 +31,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CAppDelegate : UIResponder <UIApplicationDelegate>
+@interface CAppDelegate : UIResponder<UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 

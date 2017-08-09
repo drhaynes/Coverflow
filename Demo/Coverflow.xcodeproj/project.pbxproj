@@ -170,6 +170,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 456BDDF31610896400398F00 /* Build configuration list for PBXNativeTarget "Coverflow" */;
 			buildPhases = (
+				3D2B7C641F3B4F3000851108 /* Swift Format */,
 				456BDDCB1610896400398F00 /* Sources */,
 				456BDDCC1610896400398F00 /* Frameworks */,
 				456BDDCD1610896400398F00 /* Resources */,
@@ -192,6 +193,11 @@
 				CLASSPREFIX = C;
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = toxicsoftware;
+				TargetAttributes = {
+					456BDDCE1610896400398F00 = {
+						DevelopmentTeam = R5XY3Y4HR4;
+					};
+				};
 			};
 			buildConfigurationList = 456BDDC91610896400398F00 /* Build configuration list for PBXProject "Coverflow" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -226,6 +232,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3D2B7C641F3B4F3000851108 /* Swift Format */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Swift Format";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftformat >/dev/null; then\nswiftformat ${SRCROOT} --indent tabs --allman false --wraparguments afterfirst --removelines disabled --wrapelements beforefirst --exponentcase lowercase --header ignore --insertlines disabled --binarygrouping none --empty void --ranges nospace --trimwhitespace always --hexliteralcase uppercase --linebreaks lf --decimalgrouping none --commas always --comments indent --ifdef indent --octalgrouping none --hexgrouping none --semicolons inline --stripunusedargs closure-only\nelse\necho \"ERROR: swiftformat not installed, install from homebrew:\"\necho \"brew install swiftformat\"\nexit 1\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		456BDDCB1610896400398F00 /* Sources */ = {
@@ -297,7 +320,7 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 			};
@@ -325,7 +348,7 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
@@ -336,9 +359,11 @@
 		456BDDF41610896400398F00 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = R5XY3Y4HR4;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Coverflow/Coverflow-Prefix.pch";
 				INFOPLIST_FILE = "Coverflow/Coverflow-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mbpc.Coverflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -347,9 +372,11 @@
 		456BDDF51610896400398F00 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = R5XY3Y4HR4;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Coverflow/Coverflow-Prefix.pch";
 				INFOPLIST_FILE = "Coverflow/Coverflow-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mbpc.Coverflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
