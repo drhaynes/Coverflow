@@ -35,7 +35,7 @@
 // TODO interpolators for points, sizes, transforms, colors, etc.
 
 @interface CInterpolator ()
-@property (readwrite, nonatomic, assign) Interpolator<CGFloat> *KV;
+@property (readwrite, nonatomic, assign) Interpolator *KV;
 @end
 
 @implementation CInterpolator
@@ -88,7 +88,7 @@
     NSParameterAssert(_keys.count > 0);
     NSParameterAssert(self.keys.count == self.values.count);
 
-    _KV = new Interpolator<CGFloat>();
+    _KV = new Interpolator();
     for (NSUInteger N = 0; N != self.keys.count; ++N) {
         _KV->addKV([self.keys[N] floatValue], [self.values[N] floatValue]);
     }

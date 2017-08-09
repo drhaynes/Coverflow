@@ -35,7 +35,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     CCoverflowCollectionViewLayoutAttributes *theCopy = [super copyWithZone:zone];
-    theCopy.shieldAlpha = self.shieldAlpha;
+    theCopy.darknessMaskAlpha = self.darknessMaskAlpha;
     //theCopy.userInfo = [self.userInfo copyWithZone:zone];
 #if DEBUG == 1
     theCopy.debugInfo = self.debugInfo;

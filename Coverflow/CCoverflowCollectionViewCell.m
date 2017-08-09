@@ -52,7 +52,7 @@
         [self.layer addSublayer:self.shieldLayer];
     }
 
-    self.shieldLayer.opacity = (float)theLayoutAttributes.shieldAlpha;
+    self.shieldLayer.opacity = (float)theLayoutAttributes.darknessMaskAlpha;
 
 #if DEBUG == 1
     if (theLayoutAttributes.debugInfo.length > 0) {

@@ -90,12 +90,6 @@
         @(-0.5f) : @(1.0f),
     }] interpolatorWithReflection:NO];
 
-    //	self.zOffsetInterpolator = [[CInterpolator interpolatorWithDictionary:@{
-    //		@(-9.0f):               @(9.0f),
-    //		@(-1.0f - FLT_EPSILON): @(1.0f),
-    //		@(-1.0f):               @(0.0f),
-    //		}] interpolatorWithReflection:NO];
-
     self.darknessInterpolator = [[CInterpolator interpolatorWithDictionary:@{
         @(-2.5f) : @(0.5f),
         @(-0.5f) : @(0.0f),
@@ -126,8 +120,7 @@
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSMutableArray *theLayoutAttributes = [NSMutableArray array];
 
-    // Cells...
-    // TODO -- 3 is a bit of a fudge to make sure we get all cells... Ideally we should compute the right number of extra cells to fetch...
+    // 3 is a bit of a fudge to make sure we get all cells... Ideally we should compute the right number of extra cells to fetch...
     NSInteger theStart = MIN(MAX((NSInteger)floor(CGRectGetMinX(rect) / self.cellSpacing) - 3, 0), self.cellCount);
     NSInteger theEnd = MIN(MAX((NSInteger)ceil(CGRectGetMaxX(rect) / self.cellSpacing) + 3, 0), self.cellCount);
 
@@ -140,21 +133,19 @@
         }
     }
 
-    // Decorations...
-    [theLayoutAttributes addObject:[self layoutAttributesForSupplementaryViewOfKind:@"title" atIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]]];
+    [theLayoutAttributes addObject:[self layoutAttributesForSupplementaryViewOfKind:@"title"
+                                                                        atIndexPath:[NSIndexPath indexPathForItem:0
+                                                                                                        inSection:0]]];
 
     return (theLayoutAttributes);
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
-    // Capture some commonly used variables...
     const CGFloat theRow = indexPath.row;
     const CGRect theViewBounds = self.collectionView.bounds;
 
     CCoverflowCollectionViewLayoutAttributes *theAttributes = [CCoverflowCollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
     theAttributes.size = self.cellSize;
-
-    // #########################################################################
 
     // Delta is distance from center of the view in cellSpacing units...
     const CGFloat theDelta = ((theRow + 0.5f) * self.cellSpacing + self.centerOffset - theViewBounds.size.width * 0.5f - self.collectionView.contentOffset.x) / self.cellSpacing;
@@ -164,19 +155,15 @@
         self.currentIndexPath = indexPath;
     }
 
-    // #########################################################################
-
     const CGFloat thePosition = (theRow + 0.5f) * (self.cellSpacing) + [self.positionoffsetInterpolator interpolatedValueForKey:theDelta];
     theAttributes.center = (CGPoint){thePosition + self.centerOffset, CGRectGetMidY(theViewBounds)};
 
-    // #########################################################################
-
     CATransform3D theTransform = CATransform3DIdentity;
-    theTransform.m34 = 1.0f / -850.0f; // Magic Number is Magic.
+    // Setting .m34 is required to get proper perspective correction when doing 3d transforms
+    theTransform.m34 = 1.0f / -850.0f;
 
     const CGFloat theScale = [self.scaleInterpolator interpolatedValueForKey:theDelta];
     theTransform = CATransform3DScale(theTransform, theScale, theScale, 1.0f);
-
     const CGFloat theRotation = [self.rotationInterpolator interpolatedValueForKey:theDelta];
     theTransform = CATransform3DTranslate(theTransform, self.cellSize.width * (theDelta > 0.0f ? 0.5f : -0.5f), 0.0f, 0.0f);
     theTransform = CATransform3DRotate(theTransform, theRotation * (CGFloat)M_PI / 180.0f, 0.0f, 1.0f, 0.0f);
@@ -186,14 +173,8 @@
     theTransform = CATransform3DTranslate(theTransform, 0.0, 0.0, theZOffset);
 
     theAttributes.transform3D = theTransform;
-
-    // #########################################################################
-
-    theAttributes.shieldAlpha = [self.darknessInterpolator interpolatedValueForKey:theDelta];
-
+    theAttributes.darknessMaskAlpha = [self.darknessInterpolator interpolatedValueForKey:theDelta];
     theAttributes.zIndex = self.cellCount - labs(self.currentIndexPath.row - indexPath.row);
-
-    // #########################################################################
 
     return (theAttributes);
 }
