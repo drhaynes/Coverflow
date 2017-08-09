@@ -29,15 +29,12 @@
 //	authors and should not be interpreted as representing official policies, either expressed
 //	or implied, of Jonathan Wight.
 
-#import "CCoverflowCollectionViewCell.h"
 #import <QuartzCore/QuartzCore.h>
 #import "CCoverflowCollectionViewLayoutAttributes.h"
+#import "CCoverflowCollectionViewCell.h"
 
 @interface CCoverflowCollectionViewCell ()
-@property (readwrite, nonatomic, strong) CALayer *shieldLayer;
-#if DEBUG == 1
-@property (readwrite, nonatomic, strong) UILabel *debugInfoLabel;
-#endif
+@property (readwrite, nonatomic, strong) CALayer *darknessMaskLayer;
 @end
 
 @implementation CCoverflowCollectionViewCell
@@ -45,38 +42,16 @@
 - (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
     [super applyLayoutAttributes:layoutAttributes];
 
+    if (self.darknessMaskLayer == nil) {
+        self.darknessMaskLayer = [CALayer layer];
+        self.darknessMaskLayer.frame = self.bounds;
+        self.darknessMaskLayer.backgroundColor = [UIColor blackColor].CGColor;
+        self.darknessMaskLayer.zPosition = FLT_MAX;
+        [self.layer addSublayer:self.darknessMaskLayer];
+    }
+
     CCoverflowCollectionViewLayoutAttributes *theLayoutAttributes = (CCoverflowCollectionViewLayoutAttributes *)layoutAttributes;
-    if (self.shieldLayer == NULL) {
-        self.shieldLayer = [self makeShieldLayer];
-        self.shieldLayer.zPosition = FLT_MAX;
-        [self.layer addSublayer:self.shieldLayer];
-    }
-
-    self.shieldLayer.opacity = (float)theLayoutAttributes.darknessMaskAlpha;
-
-#if DEBUG == 1
-    if (theLayoutAttributes.debugInfo.length > 0) {
-        if (self.debugInfoLabel == NULL) {
-            self.debugInfoLabel = [[UILabel alloc] initWithFrame:CGRectInset(self.bounds, 10, 10)];
-            self.debugInfoLabel.numberOfLines = 0;
-            self.debugInfoLabel.lineBreakMode = NSLineBreakByCharWrapping;
-            self.debugInfoLabel.backgroundColor = [UIColor clearColor];
-            self.debugInfoLabel.textColor = [UIColor redColor];
-            [self addSubview:self.debugInfoLabel];
-        }
-        self.debugInfoLabel.text = theLayoutAttributes.debugInfo;
-    } else {
-        [self.debugInfoLabel removeFromSuperview];
-        self.debugInfoLabel = NULL;
-    }
-#endif /* DEBUG == 1 */
-}
-
-- (CALayer *)makeShieldLayer {
-    CALayer *theShield = [CALayer layer];
-    theShield.frame = self.bounds;
-    theShield.backgroundColor = [UIColor blackColor].CGColor;
-    return (theShield);
+    self.darknessMaskLayer.opacity = (float)theLayoutAttributes.darknessMaskAlpha;
 }
 
 @end
