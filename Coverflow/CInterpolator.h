@@ -36,8 +36,6 @@
 @property (readwrite, nonatomic, copy) NSArray *keys;
 @property (readwrite, nonatomic, copy) NSArray *values;
 
-+ (CInterpolator *)interpolator;
-+ (CInterpolator *)interpolatorWithValues:(NSArray *)inValues forKeys:(NSArray *)inKeys;
 + (CInterpolator *)interpolatorWithDictionary:(NSDictionary *)inDictionary;
 - (CGFloat)interpolatedValueForKey:(CGFloat)key;
 

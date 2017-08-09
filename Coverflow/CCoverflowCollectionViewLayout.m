@@ -32,11 +32,6 @@
 #import "CCoverflowCollectionViewLayout.h"
 #import "CInterpolator.h"
 #import "CCoverflowCollectionViewLayoutAttributes.h"
-#import "tgmath.h"
-
-// If we decide to make this vertical we could use these macros to help make it painless...
-//#define XORY(axis, point) ((axis) ? (point.y) : (point.x))
-//#define WORH(axis, size) ((axis) ? (size.height) : (size.width))
 
 @interface CCoverflowCollectionViewLayout ()
 
@@ -58,7 +53,7 @@
 }
 
 - (id)init {
-    if ((self = [super init]) != NULL) {
+    if ((self = [super init]) != nil) {
         [self setup];
     }
     return self;
@@ -105,7 +100,7 @@
     if (newBounds.size.width != self.collectionView.bounds.size.width) {
         self.savedCenterIndexPath = self.currentIndexPath;
     }
-    return (YES);
+    return YES;
 }
 
 - (CGSize)collectionViewContentSize {
@@ -113,7 +108,7 @@
         .width = self.cellSpacing * self.cellCount + self.centerOffset * 2.0f,
         .height = self.collectionView.bounds.size.height,
     };
-    return (theSize);
+    return theSize;
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
@@ -136,7 +131,7 @@
                                                                         atIndexPath:[NSIndexPath indexPathForItem:0
                                                                                                         inSection:0]]];
 
-    return (theLayoutAttributes);
+    return theLayoutAttributes;
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -170,7 +165,7 @@
     theAttributes.darknessMaskAlpha = [self.darknessInterpolator interpolatedValueForKey:theDelta];
     theAttributes.zIndex = self.cellCount - labs(self.currentIndexPath.row - indexPath.row);
 
-    return (theAttributes);
+    return theAttributes;
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
@@ -178,7 +173,7 @@
     theAttributes.center = (CGPoint){.x = CGRectGetMidX(self.collectionView.bounds), .y = CGRectGetMaxY(self.collectionView.bounds) - 25};
     theAttributes.size = (CGSize){200, 50};
     theAttributes.zIndex = 1;
-    return (theAttributes);
+    return theAttributes;
 }
 
 - (CGPoint)targetContentOffsetForProposedContentOffset:(CGPoint)proposedContentOffset withScrollingVelocity:(CGPoint)velocity {
@@ -187,7 +182,7 @@
         theTargetContentOffset.x = round(theTargetContentOffset.x / self.cellSpacing) * self.cellSpacing;
         theTargetContentOffset.x = MIN(theTargetContentOffset.x, (self.cellCount - 1) * self.cellSpacing);
     }
-    return (theTargetContentOffset);
+    return theTargetContentOffset;
 }
 
 - (CGPoint)targetContentOffsetForProposedContentOffset:(CGPoint)proposedContentOffset {
@@ -205,7 +200,7 @@
             theTargetContentOffset.x = MIN(theTargetContentOffset.x, (self.cellCount - 1) * self.cellSpacing);
         }
     }
-    return (theTargetContentOffset);
+    return theTargetContentOffset;
 }
 
 @end

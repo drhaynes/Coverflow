@@ -33,10 +33,6 @@
 
 @interface CCoverflowCollectionViewLayoutAttributes : UICollectionViewLayoutAttributes
 
-// Used to mask and darken the view
 @property (readwrite, nonatomic, assign) CGFloat darknessMaskAlpha;
-//@property (readwrite, nonatomic, strong) id<NSCopying> userInfo;
-#if DEBUG == 1
-@property (readwrite, nonatomic, strong) NSString *debugInfo;
-#endif /* DEBUG == 1 */
+
 @end

@@ -31,7 +31,6 @@
 
 #import "CDemoCollectionViewController.h"
 #import <QuartzCore/QuartzCore.h>
-#import <AssetsLibrary/AssetsLibrary.h>
 #import "CDemoCollectionViewCell.h"
 #import "CCoverflowTitleView.h"
 #import "CCoverflowCollectionViewLayout.h"
@@ -39,7 +38,7 @@
 
 @interface CDemoCollectionViewController ()
 @property (readwrite, nonatomic, assign) NSInteger cellCount;
-@property (readwrite, nonatomic, strong) NSArray *assets;
+@property (readwrite, nonatomic, strong) NSArray *imageFileURLs;
 @property (readwrite, nonatomic, strong) CCoverflowTitleView *titleView;
 @property (readwrite, nonatomic, strong) NSCache *imageCache;
 @end
@@ -54,19 +53,17 @@
 
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([CCoverflowTitleView class]) bundle:NULL] forSupplementaryViewOfKind:@"title" withReuseIdentifier:@"title"];
 
-    NSMutableArray *theAssets = [NSMutableArray array];
+    NSMutableArray *imageURLsFromBundle = [NSMutableArray array];
     NSURL *theURL = [[[NSBundle mainBundle] resourceURL] URLByAppendingPathComponent:@"Images"];
     NSEnumerator *theEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:theURL includingPropertiesForKeys:NULL options:NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles errorHandler:NULL];
     for (theURL in theEnumerator) {
         if ([[theURL pathExtension] isEqualToString:@"jpg"]) {
-            [theAssets addObject:theURL];
+            [imageURLsFromBundle addObject:theURL];
         }
     }
-    self.assets = theAssets;
-    self.cellCount = self.assets.count;
+    self.imageFileURLs = imageURLsFromBundle;
+    self.cellCount = self.imageFileURLs.count;
 }
-
-#pragma mark -
 
 - (void)updateTitle {
     // Asking a collection view for indexPathForItem inside a scrollViewDidScroll: callback seems unreliable.
@@ -74,62 +71,55 @@
     if (theIndexPath == NULL) {
         self.titleView.titleLabel.text = NULL;
     } else {
-        NSURL *theURL = [self.assets objectAtIndex:theIndexPath.row];
-
+        NSURL *theURL = [self.imageFileURLs objectAtIndex:theIndexPath.row];
         self.titleView.titleLabel.text = [NSString stringWithFormat:@"%@", theURL.lastPathComponent];
     }
 }
 
-#pragma mark -
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section;
-{
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section; {
     return (self.cellCount);
 }
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath;
-{
-    CDemoCollectionViewCell *theCell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"DEMO_CELL" forIndexPath:indexPath];
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath; {
+    CDemoCollectionViewCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"demoCell" forIndexPath:indexPath];
 
-    if (theCell.gestureRecognizers.count == 0) {
-        [theCell addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapCell:)]];
+    if (cell.gestureRecognizers.count == 0) {
+        [cell addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapCell:)]];
     }
 
-    theCell.backgroundColor = [UIColor colorWithHue:(CGFloat)indexPath.row / (CGFloat)self.cellCount saturation:0.333f brightness:1.0 alpha:1.0];
+    cell.backgroundColor = [UIColor colorWithHue:(CGFloat)indexPath.row / (CGFloat)self.cellCount saturation:0.333f brightness:1.0 alpha:1.0];
 
-    if (indexPath.row < self.assets.count) {
-        NSURL *theURL = [self.assets objectAtIndex:indexPath.row];
-        UIImage *theImage = [self.imageCache objectForKey:theURL];
-        if (theImage == NULL) {
-            theImage = [UIImage imageWithContentsOfFile:theURL.path];
-
-            [self.imageCache setObject:theImage forKey:theURL];
-        }
-
-        theCell.imageView.image = theImage;
-        theCell.reflectionImageView.image = theImage;
-        theCell.backgroundColor = [UIColor clearColor];
+    NSURL *url = [self.imageFileURLs objectAtIndex:indexPath.row];
+    UIImage *image = [self.imageCache objectForKey:url];
+    if (image == nil) {
+        image = [UIImage imageWithContentsOfFile:url.path];
+        [self.imageCache setObject:image forKey:url];
     }
-    return (theCell);
+
+    cell.imageView.image = image;
+    cell.reflectionImageView.image = image;
+    cell.backgroundColor = [UIColor clearColor];
+    return cell;
 }
 
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
-    CCoverflowTitleView *theView = [self.collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"title" forIndexPath:indexPath];
-    self.titleView = theView;
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind
+                                                                                                      atIndexPath:(NSIndexPath *)indexPath {
+    CCoverflowTitleView *titleView = [self.collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                             withReuseIdentifier:@"title"
+                                                                                    forIndexPath:indexPath];
+    self.titleView = titleView;
     [self updateTitle];
-    return (theView);
+    return titleView;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     [self updateTitle];
 }
 
-#pragma mark -
-
 - (void)tapCell:(UITapGestureRecognizer *)inGestureRecognizer {
-    NSIndexPath *theIndexPath = [self.collectionView indexPathForCell:(UICollectionViewCell *)inGestureRecognizer.view];
-    NSLog(@"%@", [self.collectionView.collectionViewLayout layoutAttributesForItemAtIndexPath:theIndexPath]);
-    NSURL *theURL = [self.assets objectAtIndex:theIndexPath.row];
+    NSIndexPath *tappedCellIndexPath = [self.collectionView indexPathForCell:(UICollectionViewCell *)inGestureRecognizer.view];
+    NSLog(@"%@", [self.collectionView.collectionViewLayout layoutAttributesForItemAtIndexPath:tappedCellIndexPath]);
+    NSURL *theURL = [self.imageFileURLs objectAtIndex:tappedCellIndexPath.row];
     NSLog(@"%@", theURL);
 }
 

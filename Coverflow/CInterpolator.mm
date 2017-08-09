@@ -42,7 +42,7 @@
 
 + (CInterpolator *)interpolator;
 {
-    return ([[self alloc] init]);
+    return [[self alloc] init];
 }
 
 + (CInterpolator *)interpolatorWithValues:(NSArray *)inValues forKeys:(NSArray *)inKeys;
@@ -50,7 +50,7 @@
     CInterpolator *theInterpolator = [self interpolator];
     theInterpolator.keys = inKeys;
     theInterpolator.values = inValues;
-    return (theInterpolator);
+    return theInterpolator;
 }
 
 + (CInterpolator *)interpolatorWithDictionary:(NSDictionary *)inDictionary {
@@ -63,7 +63,7 @@
     CInterpolator *theInterpolator = [self interpolator];
     theInterpolator.keys = theKeys;
     theInterpolator.values = theValues;
-    return (theInterpolator);
+    return theInterpolator;
 }
 
 - (void)dealloc {
@@ -73,7 +73,7 @@
 }
 
 - (NSString *)description {
-    return ([NSString stringWithFormat:@"%@ %@", [super description], [self items]]);
+    return [NSString stringWithFormat:@"%@ %@", [super description], [self items]];
 }
 
 - (CGFloat)interpolatedValueForKey:(CGFloat)key {
@@ -81,7 +81,7 @@
         [self populate];
     }
 
-    return (_KV->interpolate(key));
+    return _KV->interpolate(key);
 }
 
 - (void)populate {
@@ -105,7 +105,7 @@
     [self enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
         [theItems addObject:@[ key, value ]];
     }];
-    return (theItems);
+    return theItems;
 }
 
 - (void)enumerateKeysAndObjectsOptions:(NSEnumerationOptions)opts usingBlock:(void (^)(id key, id value, BOOL *stop))block {
@@ -132,7 +132,7 @@
                               }];
 
     CInterpolator *theInterpolator = [CInterpolator interpolatorWithValues:theValues forKeys:theKeys];
-    return (theInterpolator);
+    return theInterpolator;
 }
 
 - (NSArray *)interpolatedValuesForKeys:(NSArray *)inKeys {
@@ -141,7 +141,7 @@
         CGFloat theValue = [self interpolatedValueForKey:[theKey floatValue]];
         [theValues addObject:@(theValue)];
     }
-    return (theValues);
+    return theValues;
 }
 
 @end

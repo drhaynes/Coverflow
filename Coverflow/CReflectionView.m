@@ -43,7 +43,7 @@
         self.layer.transform = CATransform3DMakeScale(1.0, -1.0, 1.0);
         self.layer.mask = self.gradientLayer;
     }
-    return (self);
+    return self;
 }
 
 - (id)initWithFrame:(CGRect)inFrame {
@@ -51,7 +51,7 @@
         self.layer.transform = CATransform3DMakeScale(1.0, -1.0, 1.0);
         self.layer.mask = self.gradientLayer;
     }
-    return (self);
+    return self;
 }
 
 - (void)setFrame:(CGRect)frame {
@@ -82,7 +82,7 @@
             (__bridge id)[UIColor colorWithWhite:1.0 alpha:0.8f].CGColor,
         ];
     }
-    return (_gradientLayer);
+    return _gradientLayer;
 }
 
 @end

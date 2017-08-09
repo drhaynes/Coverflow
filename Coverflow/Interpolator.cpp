@@ -29,4 +29,7 @@
 //  authors and should not be interpreted as representing official policies, either expressed
 //  or implied, of Jonathan Wight.
 
+
+// Dummy C++ implementation file to force Xcode to compile the header as C++
+
 #include "Interpolator.h"

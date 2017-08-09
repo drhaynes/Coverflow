@@ -18,8 +18,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <collectionViewLayout key="collectionViewLayout" id="Cqp-87-Goz" customClass="CCoverflowCollectionViewLayout"/>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" misplaced="YES" reuseIdentifier="DEMO_CELL" id="fPV-ww-dSv" customClass="CDemoCollectionViewCell">
-                                <rect key="frame" x="88" y="0.0" width="258" height="258"/>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" misplaced="YES" reuseIdentifier="demoCell" id="fPV-ww-dSv" customClass="CDemoCollectionViewCell">
+                                <rect key="frame" x="58.5" y="0.0" width="258" height="258"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="258" height="258"/>
