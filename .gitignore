@@ -26,7 +26,6 @@ Package.itmsp
 compile_commands.json
 .bundle
 vendor
-screenshots
 
 Carthage/Checkouts
 Carthage/Build/Mac
