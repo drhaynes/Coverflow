@@ -381,6 +381,7 @@
 				INFOPLIST_FILE = "Coverflow/Coverflow-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mbpc.Coverflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -394,6 +395,7 @@
 				INFOPLIST_FILE = "Coverflow/Coverflow-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mbpc.Coverflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
