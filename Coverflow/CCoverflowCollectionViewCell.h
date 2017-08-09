@@ -31,6 +31,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CBetterCollectionViewCell : UICollectionViewCell
+@interface CCoverflowCollectionViewCell : UICollectionViewCell
 
 @end

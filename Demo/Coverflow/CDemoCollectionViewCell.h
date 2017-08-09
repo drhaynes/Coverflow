@@ -29,11 +29,11 @@
 //	authors and should not be interpreted as representing official policies, either expressed
 //	or implied, of Jonathan Wight.
 
-#import "CBetterCollectionViewCell.h"
+#import "CCoverflowCollectionViewCell.h"
 
 @class CReflectionView;
 
-@interface CDemoCollectionViewCell : CBetterCollectionViewCell
+@interface CDemoCollectionViewCell : CCoverflowCollectionViewCell
 @property (readwrite, nonatomic, weak) IBOutlet UIImageView *imageView;
 @property (readwrite, nonatomic, weak) IBOutlet CReflectionView *reflectionImageView;
 @end

@@ -29,18 +29,18 @@
 //	authors and should not be interpreted as representing official policies, either expressed
 //	or implied, of Jonathan Wight.
 
-#import "CBetterCollectionViewCell.h"
+#import "CCoverflowCollectionViewCell.h"
 #import <QuartzCore/QuartzCore.h>
 #import "CCoverflowCollectionViewLayoutAttributes.h"
 
-@interface CBetterCollectionViewCell ()
+@interface CCoverflowCollectionViewCell ()
 @property (readwrite, nonatomic, strong) CALayer *shieldLayer;
 #if DEBUG == 1
 @property (readwrite, nonatomic, strong) UILabel *debugInfoLabel;
 #endif
 @end
 
-@implementation CBetterCollectionViewCell
+@implementation CCoverflowCollectionViewCell
 
 - (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
     [super applyLayoutAttributes:layoutAttributes];
