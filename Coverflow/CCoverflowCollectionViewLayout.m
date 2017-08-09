@@ -47,7 +47,6 @@
 @property (readwrite, nonatomic, strong) CInterpolator *scaleInterpolator;
 @property (readwrite, nonatomic, strong) CInterpolator *positionoffsetInterpolator;
 @property (readwrite, nonatomic, strong) CInterpolator *rotationInterpolator;
-@property (readwrite, nonatomic, strong) CInterpolator *zOffsetInterpolator;
 @property (readwrite, nonatomic, strong) CInterpolator *darknessInterpolator;
 
 @end
@@ -151,26 +150,21 @@
     const CGFloat theDelta = ((theRow + 0.5f) * self.cellSpacing + self.centerOffset - theViewBounds.size.width * 0.5f - self.collectionView.contentOffset.x) / self.cellSpacing;
 
     // TODO - we should write a getter for this that calculates the value. Setting it constantly is wasteful.
-    if (round(theDelta) == 0) {
-        self.currentIndexPath = indexPath;
-    }
+    if (round(theDelta) == 0) { self.currentIndexPath = indexPath; }
 
     const CGFloat thePosition = (theRow + 0.5f) * (self.cellSpacing) + [self.positionoffsetInterpolator interpolatedValueForKey:theDelta];
-    theAttributes.center = (CGPoint){thePosition + self.centerOffset, CGRectGetMidY(theViewBounds)};
+    const CGFloat theRotation = [self.rotationInterpolator interpolatedValueForKey:theDelta];
+    const CGFloat theScale = [self.scaleInterpolator interpolatedValueForKey:theDelta];
+
+    theAttributes.center = (CGPoint) { thePosition + self.centerOffset, CGRectGetMidY(theViewBounds) };
 
     CATransform3D theTransform = CATransform3DIdentity;
     // Setting .m34 is required to get proper perspective correction when doing 3d transforms
     theTransform.m34 = 1.0f / -850.0f;
-
-    const CGFloat theScale = [self.scaleInterpolator interpolatedValueForKey:theDelta];
     theTransform = CATransform3DScale(theTransform, theScale, theScale, 1.0f);
-    const CGFloat theRotation = [self.rotationInterpolator interpolatedValueForKey:theDelta];
     theTransform = CATransform3DTranslate(theTransform, self.cellSize.width * (theDelta > 0.0f ? 0.5f : -0.5f), 0.0f, 0.0f);
     theTransform = CATransform3DRotate(theTransform, theRotation * (CGFloat)M_PI / 180.0f, 0.0f, 1.0f, 0.0f);
     theTransform = CATransform3DTranslate(theTransform, self.cellSize.width * (theDelta > 0.0f ? -0.5f : 0.5f), 0.0f, 0.0f);
-
-    const CGFloat theZOffset = [self.zOffsetInterpolator interpolatedValueForKey:theDelta];
-    theTransform = CATransform3DTranslate(theTransform, 0.0, 0.0, theZOffset);
 
     theAttributes.transform3D = theTransform;
     theAttributes.darknessMaskAlpha = [self.darknessInterpolator interpolatedValueForKey:theDelta];
