@@ -31,7 +31,7 @@
 
 #import "CBetterCollectionViewCell.h"
 #import <QuartzCore/QuartzCore.h>
-#import "CBetterCollectionViewLayoutAttributes.h"
+#import "CCoverflowCollectionViewLayoutAttributes.h"
 
 @interface CBetterCollectionViewCell ()
 @property (readwrite, nonatomic, strong) CALayer *shieldLayer;
@@ -45,7 +45,7 @@
 - (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
     [super applyLayoutAttributes:layoutAttributes];
 
-    CBetterCollectionViewLayoutAttributes *theLayoutAttributes = (CBetterCollectionViewLayoutAttributes *)layoutAttributes;
+    CCoverflowCollectionViewLayoutAttributes *theLayoutAttributes = (CCoverflowCollectionViewLayoutAttributes *)layoutAttributes;
     if (self.shieldLayer == NULL) {
         self.shieldLayer = [self makeShieldLayer];
         self.shieldLayer.zPosition = FLT_MAX;

@@ -29,18 +29,14 @@
 //	authors and should not be interpreted as representing official policies, either expressed
 //	or implied, of Jonathan Wight.
 
-#import "CBetterCollectionViewLayoutAttributes.h"
+#import "CCoverflowCollectionViewLayoutAttributes.h"
 
-@implementation CBetterCollectionViewLayoutAttributes
-
-- (NSString *)description {
-    return ([NSString stringWithFormat:@"%@ (%@)", [super description], self.userInfo]);
-}
+@implementation CCoverflowCollectionViewLayoutAttributes
 
 - (id)copyWithZone:(NSZone *)zone {
-    CBetterCollectionViewLayoutAttributes *theCopy = [super copyWithZone:zone];
+    CCoverflowCollectionViewLayoutAttributes *theCopy = [super copyWithZone:zone];
     theCopy.shieldAlpha = self.shieldAlpha;
-    theCopy.userInfo = [self.userInfo copyWithZone:zone];
+    //theCopy.userInfo = [self.userInfo copyWithZone:zone];
 #if DEBUG == 1
     theCopy.debugInfo = self.debugInfo;
 #endif /* DEBUG == 1 */

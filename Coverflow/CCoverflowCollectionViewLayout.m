@@ -31,7 +31,7 @@
 
 #import "CCoverflowCollectionViewLayout.h"
 #import "CInterpolator.h"
-#import "CBetterCollectionViewLayoutAttributes.h"
+#import "CCoverflowCollectionViewLayoutAttributes.h"
 #import "tgmath.h"
 
 // If we decide to make this vertical we could use these macros to help make it painless...
@@ -55,7 +55,7 @@
 @implementation CCoverflowCollectionViewLayout
 
 + (Class)layoutAttributesClass {
-    return ([CBetterCollectionViewLayoutAttributes class]);
+    return ([CCoverflowCollectionViewLayoutAttributes class]);
 }
 
 - (id)init {
@@ -151,7 +151,7 @@
     const CGFloat theRow = indexPath.row;
     const CGRect theViewBounds = self.collectionView.bounds;
 
-    CBetterCollectionViewLayoutAttributes *theAttributes = [CBetterCollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
+    CCoverflowCollectionViewLayoutAttributes *theAttributes = [CCoverflowCollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
     theAttributes.size = self.cellSize;
 
     // #########################################################################
